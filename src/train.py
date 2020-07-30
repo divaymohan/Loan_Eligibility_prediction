@@ -9,42 +9,24 @@ from sklearn import ensemble
 import encoder
 
 
-def run(fold, model):
+def run(fold):
     # read the training data with folds
     df = pd.read_csv(config.TRAINING_FILE)
     df = df.drop("Unnamed: 0", axis=1)
     # training data is where k fold is not equal to provided fold
     # also, note that we reset the index
+    features = [
+        f
+        for f in df.columns
+        if f not in ("kfolds", "ApplicantIncome", "CoapplicantIncome", "LoanAmount",)
+    ]
+    df = encoder.LabelEncoder_preprocessor(df, features)
     df_train = df[df.kfolds != fold].reset_index(drop=True)
 
     # validation data is where kfold is equal to provided fold
-    df_valid = df[df.kfold == fold].reset_index(drop=True)
-    df_train = encoder.OneHotEncoder_preprocessor(
-        df_train,
-        [
-            "Gender",
-            "Married",
-            "Dependents",
-            "Education",
-            "Self_Employed",
-            "Loan_Amount_Term",
-            "Credit_History",
-            "Property_Area",
-        ],
-    )
-    df_valid = encoder.OneHotEncoder_preprocessor(
-        df_valid,
-        [
-            "Gender",
-            "Married",
-            "Dependents",
-            "Education",
-            "Self_Employed",
-            "Loan_Amount_Term",
-            "Credit_History",
-            "Property_Area",
-        ],
-    )
+    df_valid = df[df.kfolds == fold].reset_index(drop=True)
+    df_train = df_train.drop("kfolds", axis=1)
+    df_valid = df_valid.drop("kfolds", axis=1)
 
     # drop the label column from dataframe and convert it to
     # a numpy array by using values.
@@ -57,7 +39,7 @@ def run(fold, model):
     y_valid = df_valid.Loan_Status
 
     # initialize simple decision tree classifier from sklearn
-    clf = ensemble.RandomForestClassifier()
+    clf = tree.DecisionTreeClassifier(max_depth=7)
 
     # fit the model on training data
     clf.fit(x_train, y_train)
@@ -85,11 +67,11 @@ if __name__ == "__main__":
     # add the different arguments you need and their type
     # currently, we only need fold
     parser.add_argument("--fold", type=int)
-    parser.add_argument("--model", type=str)
+    # parser.add_argument("--model", type=str)
 
     # read the arguments from the command line
     args = parser.parse_args()
 
     # run the fold specified by command line arguments
-    run(fold=args.fold, model=args.model)
+    run(fold=args.fold)
 

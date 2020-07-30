@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
-import sklearn import preprocessing
+from sklearn import preprocessing
 
-def OneHotEncoder_preprocessor(data,columns):
+
+def OneHotEncoder_preprocessor(data, columns):
     """[summary]
 
     Args:
@@ -15,16 +16,17 @@ def OneHotEncoder_preprocessor(data,columns):
     """
     for column in columns:
         # fill na with new category as none
-        data.loc[:,column] = data[column].fillna('None')
+        data.loc[:, column] = data[column].fillna("None")
     # initialize LabelEncoder
     ohe = preprocessing.OneHotEncoder()
     # fit label encoder and transform values on column
     ohe.fit(data[columns])
     # P.S do not use this directly .fit first, then transform
-    data.loc[:,columns] = ohe.transform(data[columns])
+    data.loc[:, columns] = ohe.transform(data[columns])
     return data
 
-def LabelEncoder_preprocessor(data,columns):
+
+def LabelEncoder_preprocessor(data, columns):
     """LabelEncoder_preprocessor function take data and target columns list as perameter
 
     Args:
@@ -43,15 +45,16 @@ def LabelEncoder_preprocessor(data,columns):
     """
     for column in columns:
         # fill na with new category as none
-        data.loc[:,column] = data[column].fillna('None')
+        data.loc[:, column] = data[column].fillna("None")
         # initialize LabelEncoder
         lbl_enc = preprocessing.LabelEncoder()
         # fit label encoder and transform values on column
         # P.S do not use this directly .fit first, then transform
-        df.loc[:,column] = lbl_enc.fit_transform(data[column].values)
+        data.loc[:, column] = lbl_enc.fit_transform(data[column].values)
     return data
 
-def BinarizeEncoder_preprocessor(data,columns):
+
+def BinarizeEncoder_preprocessor(data, columns):
     """[summary]
 
     Args:
@@ -66,7 +69,9 @@ def BinarizeEncoder_preprocessor(data,columns):
         neural model
     """
     return data
-def mappingEncoder_preprocesor(data,column,mapping):
+
+
+def mappingEncoder_preprocesor(data, column, mapping):
     """Mapping Encoder
 
     Args:
@@ -77,5 +82,5 @@ def mappingEncoder_preprocesor(data,column,mapping):
     Returns:
         pandas.DataFrame: return same dataframe with replacement of mapped column
     """
-    data.loc[:,column] = data[column].map(mapping)
+    data.loc[:, column] = data[column].map(mapping)
     return data
