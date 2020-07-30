@@ -6,18 +6,45 @@ import config
 import argparse
 import model_dispatcher
 from sklearn import ensemble
+import encoder
 
 
 def run(fold, model):
     # read the training data with folds
     df = pd.read_csv(config.TRAINING_FILE)
-
+    df = df.drop("Unnamed: 0", axis=1)
     # training data is where k fold is not equal to provided fold
     # also, note that we reset the index
     df_train = df[df.kfolds != fold].reset_index(drop=True)
 
     # validation data is where kfold is equal to provided fold
     df_valid = df[df.kfold == fold].reset_index(drop=True)
+    df_train = encoder.OneHotEncoder_preprocessor(
+        df_train,
+        [
+            "Gender",
+            "Married",
+            "Dependents",
+            "Education",
+            "Self_Employed",
+            "Loan_Amount_Term",
+            "Credit_History",
+            "Property_Area",
+        ],
+    )
+    df_valid = encoder.OneHotEncoder_preprocessor(
+        df_valid,
+        [
+            "Gender",
+            "Married",
+            "Dependents",
+            "Education",
+            "Self_Employed",
+            "Loan_Amount_Term",
+            "Credit_History",
+            "Property_Area",
+        ],
+    )
 
     # drop the label column from dataframe and convert it to
     # a numpy array by using values.
