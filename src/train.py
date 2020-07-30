@@ -5,6 +5,7 @@ from sklearn import tree
 import config
 import argparse
 import model_dispatcher
+from sklearn import ensemble
 
 
 def run(fold, model):
@@ -21,15 +22,15 @@ def run(fold, model):
     # drop the label column from dataframe and convert it to
     # a numpy array by using values.
     # target is label column in the dataframe
-    x_train = df_train.drop("label", axis=1).values
-    y_train = df_train.label.values
+    x_train = df_train.drop("Loan_Status", axis=1)
+    y_train = df_train.Loan_Status
 
     # similarly, for validation we have
-    x_valid = df_valid.drop("label", axis=1).values
-    y_valid = df_valid.label.values
+    x_valid = df_valid.drop("Loan_Status", axis=1)
+    y_valid = df_valid.Loan_Status
 
     # initialize simple decision tree classifier from sklearn
-    clf = model_dispatcher.models[model]
+    clf = ensemble.RandomForestClassifier()
 
     # fit the model on training data
     clf.fit(x_train, y_train)
