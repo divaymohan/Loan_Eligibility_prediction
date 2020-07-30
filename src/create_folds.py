@@ -15,18 +15,19 @@ def create_folds(data):
     num_bins = np.floor(1 + np.log2(len(data)))
 
     # bin targets
-    data.loc[:, "bins"] = pd.cut(data["target"], bins=num_bins, labels=False)
-
+    #data.loc[:, "bins"] = pd.cut(data["Loan_Status"], bins=num_bins, labels=False)
+    y = data.Loan_Status.values
     # initiate the kfold class from model_selection module
     kf = model_selection.StratifiedKFold(n_splits=5)
 
     # fill the new kfold column
     # note that instead of targets, we use bins!
-    for f, (trn_, val_) in enumerate(kf.split(X=data, y=data.bins.values)):
-        data.loc[v_, "kfolds"] = f
+    for f, (trn_, val_) in enumerate(kf.split(X=data, y=y)):
+        data.loc[val_, "kfolds"] = f
+    data.to_csv("../input/train_folds.csv", index=False)
 
     # drop the bins column
-    data = data.drop("bins", axis=1)
+    #data = data.drop("bins", axis=1)
     # return dataframe with folds
     return data
 
@@ -42,9 +43,9 @@ if __name__ == "__main__":
     df = df.sample(frac=1).reset_index(drop=True)
 
     # initiate the kfold class from model_selection module
-    # kf = model_selection.StratifiedKFold(n_splits=5)
+    kf = model_selection.StratifiedKFold(n_splits=5)
 
-    kf = model_selection.kFold(n_splits=5)
+    #kf = model_selection.kFold(n_splits=5)
 
     # fill the new kfold column
     for fold, (trn_, val_) in enumerate(kf.split(X=df)):
